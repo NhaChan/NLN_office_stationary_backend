@@ -191,5 +191,5 @@ module.exports = {
     deleteUser,
     getAllUser,
     getDetailsUser,
-    deleteManyUser,
+    deleteManyUser
 }
