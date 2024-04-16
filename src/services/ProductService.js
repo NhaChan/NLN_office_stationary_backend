@@ -126,7 +126,7 @@ const getDetailsProduct = (id) => {
 const getAllProduct = (limit, page, sort, filter) => {
     return new Promise(async (resolve, reject) => {
         try {
-            const totalProduct = await Product.count()
+            const totalProduct = await Product.countDocuments()
             let allProduct = []
             if (filter) {
                 const label = filter[0];
