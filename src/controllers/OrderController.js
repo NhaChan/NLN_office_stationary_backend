@@ -90,10 +90,28 @@ const getAllOrder = async (req, res) => {
     }
 }
 
+const updateOrder = async (req, res) => {
+    try {
+        const orderId = req.params.id;
+        const { isDelivered } = req.body;
+    
+        // Gọi hàm service để cập nhật đơn hàng
+        const updatedOrder = await OrderService.updateOrder(orderId, isDelivered);
+    
+        // Trả về phản hồi cho client
+        return res.status(200).json(updatedOrder);
+      } catch (error) {
+        // Xử lý lỗi nếu có
+        console.error('Error updating order:', error);
+        return res.status(500).json({ message: 'Internal server error' });
+      }
+}
+
 module.exports = {
     createOrder,
     getAllOrderDetails,
     getDetailsOrder,
     cancelOrderDetails,
-    getAllOrder
+    getAllOrder,
+    updateOrder
 }
