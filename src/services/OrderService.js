@@ -121,88 +121,6 @@ const getOrderDetails = (id) => {
     })
 }
 
-const cancelOrderDetails = async (id) => {
-    try {
-        const order = await Order.findByIdAndUpdate(
-            id,
-            { isDelivered: 'Đã hủy' },
-            { new: true }
-        );
-
-        if (!order) {
-            return {
-                status: 'ERR',
-                message: 'The order is not defined'
-            };
-        }
-
-        // Trả về thông báo thành công và đối tượng order đã cập nhật
-        return {
-            status: 'OK',
-            message: 'Order successfully canceled',
-            data: order
-        };
-    } catch (error) {
-        // Trả về thông báo lỗi nếu có
-        console.error('Error canceling order:', error);
-        throw error;
-    }
-};
-
-// const deleteOrderDetails = (id, data) => {
-//     return new Promise(async (resolve, reject) => {
-//         try {
-//             let order = []
-//             const promises = data.map(async (order) => {
-//                 const productData = await Product.findOneAndUpdate(
-//                     {
-//                         _id: order.product,
-//                         selled: { $gte: order.amount }
-//                     },
-//                     {
-//                         $inc: {
-//                             countInStock: +order.amount,
-//                             selled: -order.amount
-//                         }
-//                     },
-//                     { new: true }
-//                 )
-//                 if (productData) {
-//                     order = await Order.findByIdAndDelete(id)
-//                     if (order === null) {
-//                         resolve({
-//                             status: 'ERR',
-//                             message: 'The order is not defined'
-//                         })
-//                     }
-//                 } else {
-//                     return {
-//                         status: 'OK',
-//                         message: 'ERR',
-//                         id: order.product
-//                     }
-//                 }
-//             })
-//             const results = await Promise.all(promises)
-//             const newData = results && results[0] && results[0].id
-
-//             if (newData) {
-//                 resolve({
-//                     status: 'ERR',
-//                     message: `San pham voi id: ${newData} khong ton tai`
-//                 })
-//             }
-//             resolve({
-//                 status: 'OK',
-//                 message: 'success',
-//                 data: order
-//             })
-//         } catch (e) {
-//             reject(e)
-//         }
-//     })
-// }
-
 const getAllOrder = () => {
     return new Promise(async (resolve, reject) => {
         try {
@@ -242,6 +160,63 @@ const updateOrder = async (orderId, isDelivered) => {
         throw error;
     }
 }
+
+const cancelOrderDetails = async (id) => {
+    try {
+        const order = await Order.findById(id);
+        
+        if (!order) {
+            return {
+                status: 'ERR',
+                message: 'The order is not defined'
+            };
+        }
+
+        for (const item of order.orderItems) {
+            let productData = await Product.findOneAndUpdate(
+                {
+                    _id: item.product,
+                    selled: { $gte: item.amount }
+                },
+                {
+                    $inc: {
+                        countInStock: +item.amount,
+                        selled: -item.amount
+                    }
+                },
+                { new: true }
+            );
+
+            if (!productData) {
+                throw new Error(`Product with ID ${item.product} not found or not enough in stock`);
+            }
+        }
+
+        const updatedOrder = await Order.findByIdAndUpdate(
+            id,
+            { isDelivered: 'Đã hủy' },
+            { new: true }
+        );
+
+        if (!updatedOrder) {
+            return {
+                status: 'ERR',
+                message: 'Failed to update order status'
+            };
+        }
+
+        return {
+            status: 'OK',
+            message: 'Order successfully canceled',
+            data: updatedOrder
+        };
+    } catch (error) {
+        console.error('Error canceling order:', error);
+        throw error;
+    }
+};
+
+
 
 
 module.exports = {
