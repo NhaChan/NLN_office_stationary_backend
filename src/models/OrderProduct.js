@@ -28,7 +28,7 @@
         user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
         isPaid: { type: Boolean, default: false },
         paidAt: { type: Date },
-        isDelivered: { type: String, enum: [], default: 'Đã đặt' },
+        isDelivered: { type: String, enum: ['Chờ xác nhận', 'Đã xác nhận', 'Đang giao', 'Đã giao', 'Đã hủy'], default: 'Chờ xác nhận' },
         deliveredAt: { type: Date },
     },
         {

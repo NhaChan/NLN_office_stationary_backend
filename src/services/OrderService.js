@@ -58,7 +58,7 @@ const createOrder = (newOrder) => {
                     totalPrice,
                     user: user,
                     isPaid, paidAt,
-                    isDelivered: 'Đã đặt'
+                    isDelivered: 'Chờ xác nhận'
                 })
                 resolve({
                     status: 'OK',
@@ -138,7 +138,7 @@ const getAllOrder = () => {
 
 const updateOrder = async (orderId, isDelivered) => {
     try {
-        if (!['Đã đặt','Đang giao', 'Đã giao', 'Đã hủy'].includes(isDelivered)) {
+        if (!['Chờ xác nhận','Đang giao', 'Đã giao', 'Đã hủy'].includes(isDelivered)) {
             throw new Error('Invalid status');
         }
         
