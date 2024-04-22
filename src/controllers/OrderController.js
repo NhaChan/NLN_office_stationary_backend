@@ -4,8 +4,8 @@ const createOrder = async (req, res) => {
     try { 
         const { paymentMethod, itemsPrice, shippingPrice, totalPrice, fullName, address, city, phone } = req.body;
         console.log('object', req.body)
-        if (!paymentMethod || !itemsPrice || !shippingPrice || !totalPrice || !fullName || !address || !city || !phone) {
-            return res.status(200).json({
+        if (!paymentMethod || !itemsPrice || shippingPrice < 0 || !totalPrice || !fullName || !address || !city || !phone) {
+            return res.status(400).json({
                 status: 'ERR',
                 message: 'The input is required'
             })
