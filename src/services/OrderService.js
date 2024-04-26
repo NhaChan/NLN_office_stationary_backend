@@ -9,7 +9,7 @@ const createOrder = (newOrder) => {
                 const productData = await Product.findOneAndUpdate(
                     {
                         _id: order.product,
-                        countInStock: { $gte: order.amount }
+                        countInStock: { $gte: order.amount } //kho lon hon bang sl dat
                     },
                     {
                         $inc: {
